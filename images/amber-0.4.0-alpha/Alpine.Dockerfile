@@ -12,11 +12,11 @@ RUN which bc
 
 FROM alpine:3.14 AS final
 
+WORKDIR /app
+
 RUN apk add --no-cache bash bc \
     && rm -rf /var/cache/apk/*
 
 COPY --from=build /usr/bin/amber /usr/bin/amber
 
-RUN bash --version
-RUN bc --version
-RUN amber --version
+ENTRYPOINT ["amber"]
