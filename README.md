@@ -2,6 +2,26 @@
 
 This repository contains various images of [Amber Compiler](https://github.com/amber-lang/amber)
 
+These images have entrypoint set to Amber compiler executable.
+
+Example usage in Github workflow:
+```yaml
+jobs:
+  build-scripts:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        
+      - name: Build script
+        uses: ghcr.io/amber-lang/amber:alpine-0.4.0-alpha
+        with:
+          args:
+            - build
+            - ./script.ab
+            - ./script.sh
+```
+
 ## Development
 
 Images are separated to different folders based on Amber compiler version.
