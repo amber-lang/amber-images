@@ -1,0 +1,27 @@
+#!/usr/bin/env amber
+
+import { lowercase } from "std/text"
+
+main(args) {
+    if len(args) < 3 {
+        echo "Too few arguments!"
+        echo "build-image.ab [Amber version (0.4.0-alpha, 0.3.5-alpha, ...)] [Base Image (Alpine ...)] [Platform (linux/amd64, linux/arm64, ...)]?"
+        exit 1
+    }
+
+    let amber_version = args[1]
+    let base_img = args[2]
+    let target_platform = args[3]
+    
+    let img_path = "./images/amber-{amber_version}"
+    
+    $ amber build --minify {img_path}/install.ab {img_path}/install.sh $?
+    
+    let img_name = "amber:{lowercase(base_img)}-{amber_version}"
+    
+    if len(target_platform) > 0 {
+        $ docker buildx build --progress=plain --load --platform {target_platform} -t "{img_name}" -f {img_path}/{base_img}.Dockerfile {img_path} $?
+    } else {
+        $ docker build  --progress=plain -t "{img_name}" -f {img_path}/{base_img}.Dockerfile {img_path} $?
+    }
+}

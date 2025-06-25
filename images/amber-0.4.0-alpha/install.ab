@@ -1,0 +1,79 @@
+import { has_failed } from "std/env"
+import { array_contains } from "std/array"
+import { text_contains } from "std/text"
+
+const HOME = trust $ echo \$HOME $
+const FILE_EXTENSION = "tar.xz"
+
+fun get_arch(): Text {
+    // Determine architecture
+    let arch_type = $ uname -m $ failed {
+        echo "Failed to determine architecture."
+        echo "Please try again or use another download method."
+        exit 1
+    }
+
+    let arch = array_contains(["arm64", "aarch64"], arch_type)
+        then "aarch64"
+        else "x86_64"
+
+    return arch
+}
+
+fun os_to_file_name(os: Text): Text {
+    if {
+        os == "Darwin": return "apple-darwin"
+        os == "Linux": {
+            if not has_failed("ls -l /lib | grep libc.musl"):
+                return "unknown-linux-musl"
+        
+            return "unknown-linux-gnu"
+        }
+    }
+}
+
+fun get_installation_dir(arch: Text): Text {
+    if not has_failed("test -d \"/usr/bin\"") {
+        return "/usr/bin"
+    }
+
+    return "{HOME}/.local/bin"
+}
+
+fun unarchive_amber(os: Text, install_dir: Text, archive_name: Text) {    
+    silent $ tar --strip-components=1 -xf {archive_name} -C {install_dir} $ failed {
+        echo "Failed to unarchive amber {archive_name}"
+        echo "Please make sure that you have `tar` command installed."
+        exit 1
+    }
+}
+
+main (args) {
+    let os = args[1]
+    if not array_contains(["Darwin", "Linux"], os) {
+        echo "Invalid os argument. Expected one of: Darwin, Linux. Received: {os}."
+        exit 1
+    }
+    
+    let arch = get_arch()
+    
+    let os_file_name = os_to_file_name(os)
+    
+    let archive_name = "amber-{arch}-{os_file_name}.{FILE_EXTENSION}"
+    
+    let install_dir = get_installation_dir(arch)
+    
+    unarchive_amber(os, install_dir, archive_name)
+    
+    // Give permissions to execute amber
+    $ chmod +x "{install_dir}/amber" $ failed {
+        echo "Failed to give permissions to execute amber."
+        echo "Please make sure that root user can access {install_dir} directory."
+        exit 1
+    }
+    
+    let PATH = trust $ echo \$PATH $;
+    if not text_contains(PATH, install_dir) {
+        trust $ echo "{install_dir}" >> \$PATH $
+    }
+}
