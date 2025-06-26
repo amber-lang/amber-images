@@ -14,7 +14,7 @@ jobs:
         uses: actions/checkout@v4
         
       - name: Build script
-        uses: ghcr.io/amber-lang/amber:alpine-0.4.0-alpha
+        uses: docker://ghcr.io/amber-lang/amber:alpine-0.4.0-alpha
         with:
           args:
             - build
