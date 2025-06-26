@@ -27,15 +27,12 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
-        
-      - name: Setup Amber
-        run: |
-          sudo tar --strip-components=1 -xf ./images/amber-0.4.0-alpha/amber-x86_64-unknown-linux-gnu.tar.xz -C /usr/bin
-          sudo chmod +x /usr/bin/amber
-          amber --version
           
       - name: Compile installation script
-        run: amber build --minify ${{ matrix.image.dir }}/install.ab ${{ matrix.image.dir }}/install.sh
+        uses: docker://ghcr.io/amber-lang/amber:alpine-0.4.0-alpha
+        with:
+          args: |
+            amber build --minify ${{ matrix.image.dir }}/install.ab ${{ matrix.image.dir }}/install.sh
 
       - name: Log in to GitHub Container Registry
         uses: docker/login-action@v3
