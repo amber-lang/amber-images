@@ -1,2 +1,4 @@
 # Omit compiled amber files. We should have only amber scripts in repo.
 *.sh
+
+.DS_Store
