@@ -14,6 +14,8 @@ RUN apt update \
     && apt install -y bc wget \
     && rm -rf /var/lib/apt/lists/*
 
-COPY --from=build /usr/bin/bc /usr/bin/amber  /usr/bin/
+COPY --from=build /usr/bin/amber  /usr/bin/amber
 
 ENTRYPOINT ["amber"]
+
+CMD ["--help"]

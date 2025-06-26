@@ -20,3 +20,5 @@ RUN apk add --no-cache bash bc \
 COPY --from=build /usr/bin/amber /usr/bin/amber
 
 ENTRYPOINT ["amber"]
+
+CMD ["--help"]
