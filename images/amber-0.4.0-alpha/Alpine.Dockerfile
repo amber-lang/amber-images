@@ -1,4 +1,4 @@
-FROM alpine:3.14 AS build
+FROM alpine:3.22 AS build
 
 RUN apk update
 RUN apk add --no-cache bc bash tar xz
@@ -10,7 +10,7 @@ RUN ./install.sh Linux
 RUN which bash
 RUN which bc
 
-FROM alpine:3.14 AS final
+FROM alpine:3.22 AS final
 
 WORKDIR /app
 
