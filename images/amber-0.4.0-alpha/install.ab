@@ -40,7 +40,7 @@ fun get_installation_dir(arch: Text): Text {
     return "{HOME}/.local/bin"
 }
 
-fun unarchive_amber(os: Text, install_dir: Text, archive_name: Text) {    
+fun unarchive_amber(install_dir: Text, archive_name: Text) {    
     silent $ tar --strip-components=1 -xf {archive_name} -C {install_dir} $ failed {
         echo "Failed to unarchive amber {archive_name}"
         echo "Please make sure that you have `tar` command installed."
@@ -63,7 +63,7 @@ main (args) {
     
     let install_dir = get_installation_dir(arch)
     
-    unarchive_amber(os, install_dir, archive_name)
+    unarchive_amber(install_dir, archive_name)
     
     // Give permissions to execute amber
     $ chmod +x "{install_dir}/amber" $ failed {
